@@ -15,7 +15,7 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             login(request, user)  # Automatically log in the new user
-            return redirect("home")  # Redirect to the homepage or dashboard
+            return redirect("index")  # Redirect to the homepage or dashboard
     else:
         form = UserCreationForm()
     
