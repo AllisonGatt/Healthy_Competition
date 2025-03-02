@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
-    avatar = models.ImageField(upload_to='profile_pics/', default='default.jpg')
+#    avatar = models.ImageField(upload_to='profile_pics/', default='default.jpg')
     steps_logged = models.IntegerField(default=0)
     exercises_logged = models.IntegerField(default=0)
 
