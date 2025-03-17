@@ -21,7 +21,8 @@ def signup(request):
     
     return render(request, "signup.html", {"form": form})
 
+
 @login_required
 def profile_view(request):
-    profile = Profile.objects.get(user=request.user)
+    profile, created = Profile.objects.get_or_create(user=request.user)  # Create if missing
     return render(request, 'profile.html', {'profile': profile})
