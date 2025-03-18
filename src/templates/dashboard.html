@@ -1,12 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>{{ profile.user.username }}'s Profile</h2>
-<p>Bio: {{ profile.bio }}</p>
-<p>Steps Logged: {{ profile.steps_logged }}</p>
-<p>Exercises Logged: {{ profile.exercises_logged }}</p>
+<h2>Dashboard</h2>
+<a href="{% url 'log_activity' %}">Log New Activity</a>
 
-<h3>Recent Activity</h3>
 <ul>
     {% for activity in activities %}
         <li>{{ activity.date }}: {{ activity.steps }} steps, {{ activity.exercise_type }} for {{ activity.exercise_duration }} mins</li>
