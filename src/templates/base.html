@@ -20,7 +20,12 @@
                 {% if user.is_authenticated %}
                     <a href="{% url 'profile' %}">My Profile</a>
                     <a href="{% url 'dashboard' %}">Dashboard</a>
-                    <a href="{% url 'logout' %}">Logout</a>
+
+                    <!--Allows the user to logout, needs to use post due to CSRF protection-->
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Logout</button>
+                    </form>
                 {% endif %}
 
             </ul>

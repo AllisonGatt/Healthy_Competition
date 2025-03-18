@@ -58,6 +58,8 @@ LOGIN_REDIRECT_URL = 'index'
 
 LOGIN_URL = 'login'
 
+LOGOUT_REDIRECT_URL = 'login'
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 TEMPLATES = [
