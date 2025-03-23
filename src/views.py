@@ -13,7 +13,7 @@ def index(request):
 def signup(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
-        if form.is_valid():
+        if form.is_valid(): #ensures the input data is valid
             user = form.save()
             login(request, user)  # Automatically log in the new user
             return redirect("index")  # Redirect to the homepage or dashboard
@@ -30,19 +30,19 @@ def dashboard(request):
 @login_required
 def log_activity(request):
     if request.method == 'POST':
-        form = ActivityLogForm(request.POST)
+        form = ActivityLogForm(request.POST) #POST method, sending data
         if form.is_valid():
-            activity = form.save(commit=False)
-            activity.user = request.user
-            activity.save()
+            activity = form.save(commit=False) #does not save yet, creates an instance 
+            activity.user = request.user #this assigns the current user
+            activity.save() #this saves to the SQLite database
             
             # Update user's profile stats
-            profile, created = Profile.objects.get_or_create(user=request.user)
-            profile.steps_logged += activity.steps
-            profile.exercises_logged += 1
-            profile.save()
+            profile, created = Profile.objects.get_or_create(user=request.user) #makes sure user has profile
+            profile.steps_logged += activity.steps #this adds new steps
+            profile.exercises_logged += 1 #This increments the exercise count
+            profile.save() #saves 
 
-            return redirect('dashboard')
+            return redirect('dashboard') #returns to dashboard 
     else:
         form = ActivityLogForm()
     
@@ -50,12 +50,7 @@ def log_activity(request):
 
 @login_required
 def profile_view(request):
-    profile = Profile.objects.get(user=request.user)
-    activities = ActivityLog.objects.filter(user=request.user).order_by('-date')
+    profile = Profile.objects.get(user=request.user) #fetches logged in user's profile 
+    activities = ActivityLog.objects.filter(user=request.user).order_by('-date') #shows activity log by date
     return render(request, 'profile.html', {'profile': profile, 'activities': activities})
 
-#GET RID OF IF NOT NEEDED
-# @login_required
-# def profile_view(request):
-#     profile, created = Profile.objects.get_or_create(user=request.user)  # Create if missing
-#     return render(request, 'profile.html', {'profile': profile})
