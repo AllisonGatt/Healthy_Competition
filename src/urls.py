@@ -11,4 +11,7 @@ urlpatterns = [
     path('profile/', profile_view, name='profile'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('log-activity/', views.log_activity, name='log_activity'),
+    path("competitions/", views.competition_list, name="competition_list"),
+    path("competitions/create/", views.create_competition, name="create_competition"),
+    path("competitions/join/<int:competition_id>/", views.join_competition, name="join_competition"),
 ]

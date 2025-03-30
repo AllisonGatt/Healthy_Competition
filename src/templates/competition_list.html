@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Competitions</h2>
+    <a href="{% url 'create_competition' %}">Create a New Competition</a>
+    <ul>
+        {% for competition in competitions %}
+            <li>
+                {{ competition.name }} - {{ competition.start_date }} to {{ competition.end_date }} -
+                <a href="{% url 'join_competition' competition.id %}">Join</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -20,3 +20,18 @@ class ActivityLog(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.date}"
+    
+    from django.db import models
+from django.contrib.auth.models import User
+
+#model for competitions 
+class Competition(models.Model):
+    name = models.CharField(max_length=255)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_competitions")
+    participants = models.ManyToManyField(User, related_name="joined_competitions", blank=True)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    goal_steps = models.IntegerField()
+
+    def __str__(self):
+        return self.name

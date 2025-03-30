@@ -5,6 +5,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from .models import Profile, ActivityLog
 from .forms import ActivityLogForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Competition
+from .forms import CompetitionForm
 
 
 def index(request):
@@ -54,3 +58,30 @@ def profile_view(request):
     activities = ActivityLog.objects.filter(user=request.user).order_by('-date') #shows activity log by date
     return render(request, 'profile.html', {'profile': profile, 'activities': activities})
 
+#creating a competition list
+@login_required
+def competition_list(request):
+    competitions = Competition.objects.all()
+    return render(request, "competition_list.html", {"competitions": competitions})
+
+#creating a competition
+@login_required
+def create_competition(request):
+    if request.method == "POST":
+        form = CompetitionForm(request.POST)
+        if form.is_valid():
+            competition = form.save(commit=False)
+            competition.creator = request.user
+            competition.save()
+            competition.participants.add(request.user)
+            return redirect("competition_list")
+    else:
+        form = CompetitionForm()
+    return render(request, "create_competition.html", {"form": form})
+
+#joining a competition
+@login_required
+def join_competition(request, competition_id):
+    competition = get_object_or_404(Competition, id=competition_id)
+    competition.participants.add(request.user)
+    return redirect("competition_list")
