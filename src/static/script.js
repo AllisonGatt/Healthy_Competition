@@ -1,0 +1,1 @@
+//add JS for a congrats message when you join competition 
