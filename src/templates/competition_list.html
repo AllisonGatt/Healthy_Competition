@@ -1,23 +1,79 @@
 {% extends 'base.html' %}
+
 {% block content %}
-    <h2>Competitions</h2>
-    <a href="{% url 'create_competition' %}">Create a New Competition</a>
-    <ul>
-        {% for competition in competitions %}
-            <li>
-                {{ competition.name }} - {{ competition.start_date }} to {{ competition.end_date }} -
-                {% if user.is_authenticated %}
-                    <form action="{% url 'join_competition' competition.id %}" method="post">
+<h2>Competitions</h2>
+<a href="{% url 'create_competition' %}">Create a New Competition</a>
+
+<!-- CURRENT COMPETITIONS -->
+<h3>Current Competitions</h3>
+
+<h4>Step Competitions</h4>
+<ul>
+    {% for comp in current_competitions_steps %}
+        <li>
+            <strong>{{ comp.name }}</strong> ({{ comp.start_date }} - {{ comp.end_date }})
+            {% if user.is_authenticated %}
+                {% if user not in comp.participants.all %}
+                    <form action="{% url 'join_competition' comp.id %}" method="post" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit">Join Competition</button>
                     </form>
+                {% else %}
+                    <em>You’ve joined!</em>
                 {% endif %}
-            </li>
-            <li>
-                <a href="{% url 'competition_detail' competition.id %}">
-                  {{ competition.name }}
-                </a> – {{ competition.start_date }} to {{ competition.end_date }}
-              </li>
-        {% endfor %}
-    </ul>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No current step competitions.</li>
+    {% endfor %}
+</ul>
+
+<h4>Exercise Minute Competitions</h4>
+<ul>
+    {% for comp in current_competitions_minutes %}
+        <li>
+            <strong>{{ comp.name }}</strong> ({{ comp.start_date }} - {{ comp.end_date }})
+            {% if user.is_authenticated %}
+                {% if user not in comp.participants.all %}
+                    <form action="{% url 'join_competition' comp.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit">Join Competition</button>
+                    </form>
+                {% else %}
+                    <em>You’ve joined!</em>
+                {% endif %}
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No current exercise competitions.</li>
+    {% endfor %}
+</ul>
+
+<!-- PAST COMPETITIONS -->
+<h3>Past Competitions</h3>
+
+<h4>Step Competitions</h4>
+<ul>
+    {% for comp in past_competitions_steps %}
+        <li>
+            <strong>{{ comp.name }}</strong> ({{ comp.start_date }} - {{ comp.end_date }})
+            <a href="{% url 'competition_detail' comp.id %}">See Results</a>
+        </li>
+    {% empty %}
+        <li>No past step competitions.</li>
+    {% endfor %}
+</ul>
+
+<h4>Exercise Minute Competitions</h4>
+<ul>
+    {% for comp in past_competitions_minutes %}
+        <li>
+            <strong>{{ comp.name }}</strong> ({{ comp.start_date }} - {{ comp.end_date }})
+            <a href="{% url 'competition_detail' comp.id %}">See Results</a>
+        </li>
+    {% empty %}
+        <li>No past exercise competitions.</li>
+    {% endfor %}
+</ul>
+
 {% endblock %}
