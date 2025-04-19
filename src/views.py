@@ -9,6 +9,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Competition
 from .forms import CompetitionForm
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Competition, CompetitionParticipant
+from django.contrib import messages
 
 
 def index(request):
@@ -83,5 +87,20 @@ def create_competition(request):
 @login_required
 def join_competition(request, competition_id):
     competition = get_object_or_404(Competition, id=competition_id)
-    competition.participants.add(request.user)
-    return redirect("competition_list")
+
+    #checks to make sure the user is not already a participant  
+    already_joined = CompetitionParticipant.objects.filter(
+        user=request.user, competition=competition
+    ).exists()
+    
+    if not already_joined:
+        CompetitionParticipant.objects.create(
+            user=request.user,
+            competition=competition,
+            steps=0  
+        )
+        messages.success(request, f"You joined the competition: {competition.name}")
+    else:
+        messages.info(request, f"You already joined {competition.name}")
+    
+    return redirect('competition_detail', competition_id=competition.id)

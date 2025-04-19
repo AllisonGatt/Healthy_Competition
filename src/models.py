@@ -35,3 +35,16 @@ class Competition(models.Model):
 
     def __str__(self):
         return self.name
+
+#model for participants in competition
+class CompetitionParticipant(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
+    steps = models.IntegerField(default=0)
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'competition')  # Prevent duplicates
+
+    def __str__(self):
+        return f"{self.user.username} in {self.competition.name}"
