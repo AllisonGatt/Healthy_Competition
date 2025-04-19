@@ -12,11 +12,16 @@ class Profile(models.Model):
         return f"{self.user.username}'s Profile"
 
 class ActivityLog(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE) #links to Django's User model
-    date = models.DateField(auto_now_add=True) #records when data is logged
-    steps = models.IntegerField() #stores the steps as an integer
-    exercise_type = models.CharField(max_length=100) #short text, no more than 100 characters
-    exercise_duration = models.IntegerField(help_text="Duration in minutes") #integer for minutes
+    ACTIVITY_CHOICES = [
+        ('steps', 'Steps'),
+        ('exercise', 'Exercise (minutes)'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    activity_type = models.CharField(max_length=10, choices=ACTIVITY_CHOICES)
+    steps = models.PositiveIntegerField(default=0)
+    minutes = models.PositiveIntegerField(default=0)
+    date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.date}"

@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h2>Create a Competition</h2>
-    <form method="post">
-        {% csrf_token %}
-        <div>
-            {{ form.as_p }}  <!-- Renders all form fields with labels -->
-        </div>
-        <button type="submit">Create</button>
-    </form>
+<h2>Create a New Competition</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create Competition</button>
+</form>
+
+<a href="{% url 'competition_list' %}">Back to Competitions</a>
 {% endblock %}

@@ -42,22 +42,30 @@ def dashboard(request):
 @login_required
 def log_activity(request):
     if request.method == 'POST':
-        form = ActivityLogForm(request.POST) #POST method, sending data
+        form = ActivityLogForm(request.POST)
         if form.is_valid():
-            activity = form.save(commit=False) #does not save yet, creates an instance 
-            activity.user = request.user #this assigns the current user
-            activity.save() #this saves to the SQLite database
-            
-            # Update user's profile stats
-            profile, created = Profile.objects.get_or_create(user=request.user) #makes sure user has profile
-            profile.steps_logged += activity.steps #this adds new steps
-            profile.exercises_logged += 1 #This increments the exercise count
-            profile.save() #saves 
+            activity = form.save(commit=False)
+            activity.user = request.user
 
-            return redirect('dashboard') #returns to dashboard 
+            if activity.activity_type == 'steps' and activity.steps == 0:
+                form.add_error('steps', 'Please enter the number of steps.')
+            elif activity.activity_type == 'exercise' and activity.minutes == 0:
+                form.add_error('minutes', 'Please enter the number of minutes.')
+            else:
+                activity.save()
+
+                # Update profile
+                profile, created = Profile.objects.get_or_create(user=request.user)
+                if activity.activity_type == 'steps':
+                    profile.steps_logged += activity.steps
+                elif activity.activity_type == 'exercise':
+                    profile.exercises_logged += 1
+                profile.save()
+
+                return redirect('dashboard')
     else:
         form = ActivityLogForm()
-    
+
     return render(request, 'log_activity.html', {'form': form})
 
 @login_required
