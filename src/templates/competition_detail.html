@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>{{ competition.name }}</h2>
+  <p>From {{ competition.start_date }} to {{ competition.end_date }}</p>
+
+  <h3>Participants</h3>
+  <ul>
+    {% for participant in participants %}
+      <li>
+        {{ participant.user.username }} – Steps: {{ participant.steps }} | Exercise Minutes: {{ participant.exercise_minutes }}
+      </li>
+    {% empty %}
+      <li>No one has joined this competition yet.</li>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'competition_list' %}">← Back to Competitions</a>
+{% endblock %}

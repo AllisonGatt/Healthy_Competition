@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
@@ -9,10 +8,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Competition
 from .forms import CompetitionForm
-from django.shortcuts import get_object_or_404
+
 from django.contrib.auth.decorators import login_required
 from .models import Competition, CompetitionParticipant
 from django.contrib import messages
+
+from .models import Competition, CompetitionParticipant
 
 
 def index(request):
@@ -104,3 +105,11 @@ def join_competition(request, competition_id):
         messages.info(request, f"You already joined {competition.name}")
     
     return redirect('competition_detail', competition_id=competition.id)
+
+def competition_detail(request, competition_id):
+    competition = get_object_or_404(Competition, pk=competition_id)
+    participants = CompetitionParticipant.objects.filter(competition=competition)
+    return render(request, 'competition_detail.html', {
+        'competition': competition,
+        'participants': participants
+    })

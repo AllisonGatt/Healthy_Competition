@@ -6,8 +6,18 @@
         {% for competition in competitions %}
             <li>
                 {{ competition.name }} - {{ competition.start_date }} to {{ competition.end_date }} -
-                <a href="{% url 'join_competition' competition.id %}">Join</a>
+                {% if user.is_authenticated %}
+                    <form action="{% url 'join_competition' competition.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Join Competition</button>
+                    </form>
+                {% endif %}
             </li>
+            <li>
+                <a href="{% url 'competition_detail' competition.id %}">
+                  {{ competition.name }}
+                </a> – {{ competition.start_date }} to {{ competition.end_date }}
+              </li>
         {% endfor %}
     </ul>
 {% endblock %}
