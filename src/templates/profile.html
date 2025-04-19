@@ -1,17 +1,31 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h2>{{ profile.user.username }}'s Profile</h2>
-<p>Bio: {{ profile.bio }}</p>
-<p>Steps Logged: {{ profile.steps_logged }}</p>
-<p>Exercises Logged: {{ profile.exercises_logged }}</p>
+<div class="container">
+    <h2>{{ profile.user.username }}'s Profile</h2>
+    <p>Bio: {{ profile.bio }}</p>
 
-<h3>Recent Activity</h3>
-<ul>
-    {% for activity in activities %}
-        <li>{{ activity.date }}: {{ activity.steps }} steps, {{ activity.exercise_type }} for {{ activity.exercise_duration }} mins</li>
-    {% empty %}
-        <li>No activity logged yet.</li>
-    {% endfor %}
-</ul>
+    <h3>Daily Activity</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Steps Logged</th>
+                <th>Minutes Exercised</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in daily_activity %}
+                <tr>
+                    <td>{{ entry.date }}</td>
+                    <td>{{ entry.total_steps|default:0 }}</td>
+                    <td>{{ entry.total_minutes|default:0 }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No activity logged yet.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

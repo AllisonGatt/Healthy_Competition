@@ -38,7 +38,7 @@ class Competition(models.Model):
 
     name = models.CharField(max_length=255)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_competitions")
-    participants = models.ManyToManyField(User, related_name="joined_competitions", blank=True)
+  #  participants = models.ManyToManyField(User, related_name="joined_competitions", blank=True)
     start_date = models.DateField()
     end_date = models.DateField()
     competition_type = models.CharField(max_length=10, choices=COMPETITION_TYPE_CHOICES)
@@ -50,8 +50,9 @@ class Competition(models.Model):
 class CompetitionParticipant(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
-    steps = models.PositiveIntegerField(default=0)
-    exercise_minutes = models.PositiveIntegerField(default=0)
+    progress = models.PositiveIntegerField(default=0)  # Steps or minutes depending on competition type
+    # steps = models.PositiveIntegerField(default=0)
+    # exercise_minutes = models.PositiveIntegerField(default=0)
     joined_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

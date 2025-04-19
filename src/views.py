@@ -1,22 +1,26 @@
 from django.http import HttpResponse
+
 from django.contrib.auth import login
+
 from django.contrib.auth.forms import UserCreationForm
+
 from django.contrib.auth.decorators import login_required
 from .models import Profile, ActivityLog
 from .forms import ActivityLogForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Competition
 from .forms import CompetitionForm
-from django.shortcuts import get_object_or_404
 from .models import Competition, CompetitionParticipant
 
 from django.contrib.auth.decorators import login_required
-from .models import Competition, CompetitionParticipant
 from django.contrib import messages
 from django.utils import timezone
+from django.db.models import Sum
+from django.db.models.functions import TruncDate
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import Profile, ActivityLog
 
-from .models import Competition, CompetitionParticipant
 
 
 def index(request):
@@ -62,6 +66,25 @@ def log_activity(request):
                     profile.exercises_logged += 1
                 profile.save()
 
+                today = timezone.now().date()
+                active_competitions = Competition.objects.filter(
+                    competitionparticipant__user=request.user,
+                    competition_type=activity.activity_type,
+                    start_date__lte=today,
+                    end_date__gte=today
+                )
+
+                for competition in active_competitions:
+                    participant = CompetitionParticipant.objects.get(
+                        user=request.user, competition=competition
+                    )
+                    if activity.activity_type == 'steps':
+                        participant.progress += activity.steps
+                    elif activity.activity_type == 'exercise':
+                        participant.progress += activity.minutes
+                    participant.save()
+
+
                 return redirect('dashboard')
     else:
         form = ActivityLogForm()
@@ -71,8 +94,22 @@ def log_activity(request):
 @login_required
 def profile_view(request):
     profile = Profile.objects.get(user=request.user) #fetches logged in user's profile 
-    activities = ActivityLog.objects.filter(user=request.user).order_by('-date') #shows activity log by date
-    return render(request, 'profile.html', {'profile': profile, 'activities': activities})
+    # Group and summarize by date
+    daily_activity = (
+        ActivityLog.objects.filter(user=request.user)
+        .annotate(date=TruncDate('date'))
+        .values('date')
+        .annotate(
+            total_steps=Sum('steps'),
+            total_minutes=Sum('length')
+        )
+        .order_by('-date')
+    )
+
+    return render(request, 'profile.html', {
+        'profile': profile,
+        'daily_activity': daily_activity
+    })
 
 #creating a competition list
 @login_required
