@@ -1,24 +1,24 @@
 {% extends 'base.html' %}
-{% block content %}
-<div class="container">
-    <h2>{{ profile.user.username }}'s Profile</h2>
-    <p>Bio: {{ profile.bio }}</p>
+{% load static %}
 
-    <h3>Daily Activity</h3>
-    <table>
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ user.username }}'s Activity Overview</h2>
+
+    <table class="table table-striped mt-4">
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Steps Logged</th>
-                <th>Minutes Exercised</th>
+                <th>Total Steps</th>
+                <th>Total Exercise Minutes</th>
             </tr>
         </thead>
         <tbody>
             {% for entry in daily_activity %}
                 <tr>
                     <td>{{ entry.date }}</td>
-                    <td>{{ entry.total_steps|default:0 }}</td>
-                    <td>{{ entry.total_minutes|default:0 }}</td>
+                    <td>{{ entry.total_steps }}</td>
+                    <td>{{ entry.total_minutes }}</td>
                 </tr>
             {% empty %}
                 <tr>

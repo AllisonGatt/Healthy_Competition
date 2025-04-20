@@ -1,8 +1,19 @@
 from django.http import HttpResponse
-
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Case, When, IntegerField
+from django.db.models.functions import TruncDate
+from django.shortcuts import render
+from .models import ActivityLog, Profile
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Case, When, IntegerField
+from django.shortcuts import render
 
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+from django.db.models.functions import TruncDate
+from django.shortcuts import render
 
 from django.contrib.auth.decorators import login_required
 from .models import Profile, ActivityLog
@@ -91,24 +102,39 @@ def log_activity(request):
 
     return render(request, 'log_activity.html', {'form': form})
 
+
+
+
 @login_required
 def profile_view(request):
-    profile = Profile.objects.get(user=request.user) #fetches logged in user's profile 
-    # Group and summarize by date
+    profile = Profile.objects.get(user=request.user)
+
     daily_activity = (
-        ActivityLog.objects.filter(user=request.user)
-        .annotate(date=TruncDate('date'))
-        .values('date')
+        ActivityLog.objects
+        .filter(user=request.user)
+        .values('date')  # Use date directly, since it's already a DateField
         .annotate(
-            total_steps=Sum('steps'),
-            total_minutes=Sum('length')
+            total_steps=Sum(
+                Case(
+                    When(activity_type='steps', then='steps'),
+                    default=0,
+                    output_field=IntegerField()
+                )
+            ),
+            total_minutes=Sum(
+                Case(
+                    When(activity_type='exercise', then='minutes'),
+                    default=0,
+                    output_field=IntegerField()
+                )
+            )
         )
         .order_by('-date')
     )
 
     return render(request, 'profile.html', {
         'profile': profile,
-        'daily_activity': daily_activity
+        'daily_activity': daily_activity,
     })
 
 #creating a competition list
