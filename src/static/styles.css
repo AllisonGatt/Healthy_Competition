@@ -1,0 +1,159 @@
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fa;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  .container {
+    max-width: 900px;
+    margin: auto;
+    padding: 2rem;
+  }
+  
+  /* Header */
+  header {
+    background: linear-gradient(90deg, #56cc9d, #6eafd9);
+    color: white;
+    padding: 1rem 2rem;
+    text-align: center;
+    border-bottom: 4px solid #4fa988;
+  }
+  
+  header h1 {
+    margin: 0;
+  }
+  
+/* Navigation styles */
+nav {
+    background-color: #444;
+    border-bottom: 2px solid #ddd;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px 15px;
+    display: inline-block;
+}
+
+nav ul li a:hover,
+nav ul li a:focus {
+    background-color: #ff6600;
+    border-radius: 5px;
+}
+
+/* For authenticated users' additional links */
+nav ul li a + a {
+    margin-left: 20px;
+}
+
+/* Form (Logout button) styles */
+form {
+    display: inline;
+}
+
+form button {
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+form button:hover {
+    background-color: #e55d00;
+}
+
+/* Responsive navigation */
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    nav ul li {
+        margin: 10px 0;
+    }
+}
+  /* Table Styles */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  th, td {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  th {
+    background-color: #e2f3ec;
+  }
+  
+  /* Buttons for edit/delete */
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  button.edit,
+  button.delete {
+    padding: 0.4rem 0.75rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  
+  button.edit {
+    background-color: #6eafd9;
+    color: white;
+  }
+  
+  button.delete {
+    background-color: #e57373;
+    color: white;
+  }
+  
+  button.edit:hover {
+    background-color: #4b94c1;
+  }
+  
+  button.delete:hover {
+    background-color: #cc4c4c;
+  }
+  
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #f0f0f0;
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 3rem;
+    border-top: 1px solid #ddd;
+  }
+  
