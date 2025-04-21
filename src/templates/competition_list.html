@@ -13,7 +13,7 @@
         <li>
             <strong>{{ comp.name }}</strong> ({{ comp.start_date }} - {{ comp.end_date }})
             {% if user.is_authenticated %}
-                {% if user not in comp.participants.all %}
+                {% if comp.id not in joined_comp_ids %}
                     <form action="{% url 'join_competition' comp.id %}" method="post" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit">Join Competition</button>
@@ -34,14 +34,14 @@
         <li>
             <strong>{{ comp.name }}</strong> ({{ comp.start_date }} - {{ comp.end_date }})
             {% if user.is_authenticated %}
-                {% if user not in comp.participants.all %}
-                    <form action="{% url 'join_competition' comp.id %}" method="post" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit">Join Competition</button>
-                    </form>
-                {% else %}
-                    <em>You’ve joined!</em>
-                {% endif %}
+                {% if comp.id not in joined_comp_ids %}
+                <form action="{% url 'join_competition' comp.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Join Competition</button>
+                </form>
+            {% else %}
+                <em>You’ve joined!</em>
+            {% endif %}
             {% endif %}
         </li>
     {% empty %}

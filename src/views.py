@@ -231,11 +231,15 @@ def competition_list(request):
         end_date__lt=today
     )
 
+    # Get IDs of competitions the current user joined
+    joined_comp_ids = CompetitionParticipant.objects.filter(user=request.user).values_list('competition_id', flat=True)
+
     return render(request, 'competition_list.html', {
         'current_competitions_steps': current_competitions_steps,
         'current_competitions_minutes': current_competitions_minutes,
         'past_competitions_steps': past_competitions_steps,
-        'past_competitions_minutes': past_competitions_minutes
+        'past_competitions_minutes': past_competitions_minutes,
+        'joined_comp_ids': joined_comp_ids
     })
 
 
@@ -268,7 +272,8 @@ def join_competition(request, competition_id):
         CompetitionParticipant.objects.create(
             user=request.user,
             competition=competition,
-            steps=0  
+            #steps=0  
+            progress=0
         )
         messages.success(request, f"You joined the competition: {competition.name}")
     else:
@@ -287,13 +292,16 @@ def competition_detail(request, competition_id):
 
 def competition_results(request, competition_id):
     competition = get_object_or_404(Competition, id=competition_id)
-    participants = CompetitionParticipant.objects.filter(competition=competition).order_by('-steps')
+    #participants = CompetitionParticipant.objects.filter(competition=competition).order_by('-steps')
     
     # Determine what to sort by
-    if competition.competition_type == 'steps':
-        participants = participants.order_by('-steps')
-    elif competition.competition_type == 'minutes':
-        participants = participants.order_by('-exercise_minutes')
+    # if competition.competition_type == 'steps':
+    #     participants = participants.order_by('-steps')
+    # elif competition.competition_type == 'minutes':
+    #     participants = participants.order_by('-exercise_minutes')
+
+    participants = CompetitionParticipant.objects.filter(competition=competition).order_by('-progress')
+
     
     # Leaderboard and user rank
     leaderboard = list(participants)

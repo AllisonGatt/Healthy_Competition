@@ -32,12 +32,13 @@
       <tr {% if participant.user == user %}style="font-weight: bold;"{% endif %}>
         <td>{{ forloop.counter }}</td>
         <td>{{ participant.user.username }}</td>
-        <td>
-          {% if competition.competition_type == "steps" %}
+        <td>{{competition.get_competition_type_display}}
+
+          <!-- {% if competition.competition_type == "steps" %}
             {{ participant.steps }}
           {% else %}
             {{ participant.exercise_minutes }}
-          {% endif %}
+          {% endif %} -->
         </td>
       </tr>
     {% endfor %}
