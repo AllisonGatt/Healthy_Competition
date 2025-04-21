@@ -1,16 +1,50 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<h2>Dashboard</h2>
-<a href="{% url 'log_activity' %}">Log New Activity</a>
+<div class="container mt-4">
+    <h2>Dashboard</h2>
 
+    <!-- Log New Activity Form -->
+    <form id="activity-form" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="activity_type">Activity Type:</label>
+            <select id="activity_type" name="activity_type" class="form-control">
+                <option value="steps">Steps</option>
+                <option value="exercise">Exercise</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="steps">Steps:</label>
+            <input type="number" id="steps" name="steps" class="form-control" value="0">
+        </div>
+        <div class="form-group">
+            <label for="minutes">Minutes:</label>
+            <input type="number" id="minutes" name="minutes" class="form-control" value="0">
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Log Activity</button>
+    </form>
 
+    <div id="success-message" class="alert alert-success mt-3" style="display: none;">
+        Activity logged successfully!
+    </div>
 
-<ul>
-    {% for activity in activities %}
-        <li>{{ activity.date }}: {{ activity.steps }} steps, {{ activity.exercise_type }} for {{ activity.exercise_duration }} mins</li>
-    {% empty %}
-        <li>No activity logged yet.</li>
-    {% endfor %}
-</ul>
+    <!-- Activity Log List -->
+    <h4 class="mt-4">Recent Activity</h4>
+    <ul id="activity-list" class="list-group">
+        {% for activity in activities %}
+            <li class="list-group-item">
+                {{ activity.date }}:
+                {{ activity.steps }} steps,
+                {{ activity.minutes }} minutes
+            </li>
+        {% empty %}
+            <li class="list-group-item">No activity logged yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Link to your external JavaScript file -->
+<script src="{% static 'scripts.js' %}"></script>
 {% endblock %}

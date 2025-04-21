@@ -1,0 +1,10 @@
+<tr>
+    <td>{{ log.date }}</td>
+    <td>{{ log.get_activity_type_display }}</td>
+    <td>{{ log.steps }}</td>
+    <td>{{ log.minutes }}</td>
+    <td>
+        <a href="{% url 'edit_activity' log.pk %}">Edit</a> |
+        <a href="{% url 'delete_activity' log.pk %}">Delete</a>
+    </td>
+</tr>

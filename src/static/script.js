@@ -1,1 +1,49 @@
-//add JS for a congrats message when you join competition 
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("activity-form");
+    const successMessage = document.getElementById("success-message");
+    const activityList = document.getElementById("activity-list"); // Dashboard <ul>
+    const profileTable = document.getElementById("profile-activity-table"); // Profile table <tbody>
+
+    if (!form) return; // Only run if the form exists
+
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        fetch("/log-activity/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+            },
+            body: formData,
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("AJAX response:", data);
+
+            if (data.status === "success") {
+                successMessage.style.display = "block";
+
+                // Update dashboard activity list
+                if (activityList) {
+                    activityList.insertAdjacentHTML("afterbegin", data.row_html);
+                }
+
+                // Update profile activity table
+                if (profileTable) {
+                    profileTable.insertAdjacentHTML("afterbegin", data.profile_row_html);
+                }
+
+                form.reset();
+
+                setTimeout(() => {
+                    successMessage.style.display = "none";
+                }, 2000);
+            } else {
+                alert("Failed to log activity.");
+            }
+        })
+        .catch((error) => console.error("Error:", error));
+    });
+});

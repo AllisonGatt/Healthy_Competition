@@ -1,38 +1,23 @@
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, Case, When, IntegerField
-from django.db.models.functions import TruncDate
-from django.shortcuts import render
-from .models import ActivityLog, Profile
-from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, Case, When, IntegerField
-from django.shortcuts import render
-
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
-from django.db.models.functions import TruncDate
-from django.shortcuts import render
-
-from django.contrib.auth.decorators import login_required
-from .models import Profile, ActivityLog
-from .forms import ActivityLogForm
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .forms import CompetitionForm
-from .models import Competition, CompetitionParticipant
-
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Sum, Case, When, IntegerField
 from django.utils import timezone
 from django.db.models import Sum
-from django.db.models.functions import TruncDate
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.contrib.auth import login
+from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+import json
+from datetime import date
+
 from .models import Profile, ActivityLog
+from .models import ActivityLog, Profile
+from .models import Competition, CompetitionParticipant
 
-
+from .forms import ActivityLogForm
+from .forms import CompetitionForm
 
 def index(request):
     return render(request, 'index.html')
@@ -102,9 +87,9 @@ def log_activity(request):
 
     return render(request, 'log_activity.html', {'form': form})
 
-
-
-
+#profile view, shows the exercise/steps logged and the date logged
+#uses sum to give total steps per date with a default of 0
+#orders by date
 @login_required
 def profile_view(request):
     profile = Profile.objects.get(user=request.user)
@@ -132,10 +117,56 @@ def profile_view(request):
         .order_by('-date')
     )
 
+    logs = ActivityLog.objects.filter(user=request.user).order_by('-date')
+
     return render(request, 'profile.html', {
         'profile': profile,
         'daily_activity': daily_activity,
+        'logs': logs,
     })
+
+@login_required
+#@require_http_methods(["POST"])
+def log_activity_ajax(request):
+    if request.method == "POST":
+        form = ActivityLogForm(request.POST)
+        if form.is_valid():
+            activity = form.save(commit=False)
+            activity.user = request.user
+            activity.save()
+
+            row_html = render_to_string('partials/activity_list_item.html', {'activity': activity})  # for dashboard
+            profile_row_html = render_to_string('partials/activity_table_row.html', {'log': activity})  # for profile
+
+            return JsonResponse({
+                'status': 'success',
+                'row_html': row_html,
+                'profile_row_html': profile_row_html
+            })
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors})
+
+#view to edit activities 
+@login_required
+def edit_activity(request, pk):
+    activity = get_object_or_404(ActivityLog, pk=pk, user=request.user) #calls on ActivityLog model
+    if request.method == 'POST':
+        form = ActivityLogForm(request.POST, instance=activity)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = ActivityLogForm(instance=activity)
+    return render(request, 'edit_activity.html', {'form': form})
+
+#view to delete activities
+@login_required
+def delete_activity(request, pk):
+    activity = get_object_or_404(ActivityLog, pk=pk, user=request.user)
+    if request.method == 'POST':
+        activity.delete()
+        return redirect('profile')
+    return render(request, 'delete_activity.html', {'activity': activity})
 
 #creating a competition list
 @login_required

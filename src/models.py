@@ -12,7 +12,7 @@ class Profile(models.Model):
         return f"{self.user.username}'s Profile"
 
 class ActivityLog(models.Model):
-    ACTIVITY_CHOICES = [
+    ACTIVITY_CHOICES = [ #distinguishes between steps and exercise minutes
         ('steps', 'Steps'),
         ('exercise', 'Exercise (minutes)'),
     ]

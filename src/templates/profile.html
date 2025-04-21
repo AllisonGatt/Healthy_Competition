@@ -27,5 +27,34 @@
             {% endfor %}
         </tbody>
     </table>
+    <h4 class="mt-5">Individual Activity Logs</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Steps</th>
+                <th>Minutes</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="profile-activity-table">
+            {% for log in logs %}
+                <tr>
+                    <td>{{ log.date }}</td>
+                    <td>{{ log.get_activity_type_display }}</td>
+                    <td>{{ log.steps }}</td>
+                    <td>{{ log.minutes }}</td>
+                    <td>
+                        <a href="{% url 'edit_activity' log.pk %}">Edit</a> |
+                        <a href="{% url 'delete_activity' log.pk %}">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5">No activity logged yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'dashboard' %}">Click here to log new activity!</a>
 </div>
 {% endblock %}
