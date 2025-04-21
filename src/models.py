@@ -19,8 +19,8 @@ class ActivityLog(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     activity_type = models.CharField(max_length=10, choices=ACTIVITY_CHOICES)
-    steps = models.PositiveIntegerField(default=0)
-    minutes = models.PositiveIntegerField(default=0)
+    steps = models.PositiveIntegerField(null=True, blank=True) #this makes this optional so that it can be steps or minutes
+    minutes = models.PositiveIntegerField(null=True, blank=True) #same as above 
     date = models.DateField(auto_now_add=True)
 
     def __str__(self):

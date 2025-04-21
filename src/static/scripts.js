@@ -1,17 +1,21 @@
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("Script loaded");
+
     const form = document.getElementById("activity-form");
     const successMessage = document.getElementById("success-message");
     const activityList = document.getElementById("activity-list"); // Dashboard <ul>
-    const profileTable = document.getElementById("profile-activity-table"); // Profile table <tbody>
+    const profileTable = document.getElementById("profile-activity-list"); // Profile table <tbody>
 
     if (!form) return; // Only run if the form exists
 
     form.addEventListener("submit", function (e) {
         e.preventDefault();
 
+        console.log("Form submitted");
+
         const formData = new FormData(form);
 
-        fetch("/log-activity/", {
+        fetch("/log-activity-ajax/", {
             method: "POST",
             headers: {
                 "X-CSRFToken": formData.get("csrfmiddlewaretoken"),

@@ -9,8 +9,8 @@ from django.contrib.auth import login
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.http import JsonResponse
-import json
-from datetime import date
+from django.views.decorators.http import require_http_methods
+
 
 from .models import Profile, ActivityLog
 from .models import ActivityLog, Profile
@@ -39,53 +39,54 @@ def dashboard(request):
     activities = ActivityLog.objects.filter(user=request.user).order_by('-date')
     return render(request, 'dashboard.html', {'activities': activities})
 
-@login_required
-def log_activity(request):
-    if request.method == 'POST':
-        form = ActivityLogForm(request.POST)
-        if form.is_valid():
-            activity = form.save(commit=False)
-            activity.user = request.user
+# @login_required
+# def log_activity(request):
+#     if request.method == 'POST':
+#         form = ActivityLogForm(request.POST)
+#         if form.is_valid():
+#             activity = form.save(commit=False)
+#             activity.user = request.user
 
-            if activity.activity_type == 'steps' and activity.steps == 0:
-                form.add_error('steps', 'Please enter the number of steps.')
-            elif activity.activity_type == 'exercise' and activity.minutes == 0:
-                form.add_error('minutes', 'Please enter the number of minutes.')
-            else:
-                activity.save()
+#             if activity.activity_type == 'steps' and activity.steps == 0:
+#                 form.add_error('steps', 'Please enter the number of steps.')
+#             elif activity.activity_type == 'exercise' and activity.minutes == 0:
+#                 form.add_error('minutes', 'Please enter the number of minutes.')
+#             else:
+#                 activity.save()
 
-                # Update profile
-                profile, created = Profile.objects.get_or_create(user=request.user)
-                if activity.activity_type == 'steps':
-                    profile.steps_logged += activity.steps
-                elif activity.activity_type == 'exercise':
-                    profile.exercises_logged += 1
-                profile.save()
+#                 # Update profile
+#                 profile, created = Profile.objects.get_or_create(user=request.user)
+#                 if activity.activity_type == 'steps':
+#                     profile.steps_logged += activity.steps
+#                 elif activity.activity_type == 'exercise':
+#                     profile.exercises_logged += 1
+#                 profile.save()
 
-                today = timezone.now().date()
-                active_competitions = Competition.objects.filter(
-                    competitionparticipant__user=request.user,
-                    competition_type=activity.activity_type,
-                    start_date__lte=today,
-                    end_date__gte=today
-                )
+#                 today = timezone.now().date()
+#                 active_competitions = Competition.objects.filter(
+#                     competitionparticipant__user=request.user,
+#                     competition_type=activity.activity_type,
+#                     start_date__lte=today,
+#                     end_date__gte=today
+#                 )
 
-                for competition in active_competitions:
-                    participant = CompetitionParticipant.objects.get(
-                        user=request.user, competition=competition
-                    )
-                    if activity.activity_type == 'steps':
-                        participant.progress += activity.steps
-                    elif activity.activity_type == 'exercise':
-                        participant.progress += activity.minutes
-                    participant.save()
+#                 for competition in active_competitions:
+#                     participant = CompetitionParticipant.objects.get(
+#                         user=request.user, competition=competition
+#                     )
+#                     if activity.activity_type == 'steps':
+#                         participant.progress += activity.steps
+#                     elif activity.activity_type == 'exercise':
+#                         participant.progress += activity.minutes
+#                     participant.save()
 
 
-                return redirect('dashboard')
-    else:
-        form = ActivityLogForm()
+#                 return redirect('dashboard')
+#     else:
+#         form = ActivityLogForm()
 
-    return render(request, 'log_activity.html', {'form': form})
+#     return render(request, 'log_activity.html', {'form': form})
+
 
 #profile view, shows the exercise/steps logged and the date logged
 #uses sum to give total steps per date with a default of 0
@@ -126,25 +127,61 @@ def profile_view(request):
     })
 
 @login_required
-#@require_http_methods(["POST"])
+@require_http_methods(["POST"])
 def log_activity_ajax(request):
-    if request.method == "POST":
-        form = ActivityLogForm(request.POST)
-        if form.is_valid():
-            activity = form.save(commit=False)
-            activity.user = request.user
-            activity.save()
+    form = ActivityLogForm(request.POST)
+    if form.is_valid():
+        activity = form.save(commit=False)
+        activity.user = request.user
 
-            row_html = render_to_string('partials/activity_list_item.html', {'activity': activity})  # for dashboard
-            profile_row_html = render_to_string('partials/activity_table_row.html', {'log': activity})  # for profile
+        # Extra validation
+        if activity.activity_type == 'steps' and activity.steps == 0:
+            return JsonResponse({'status': 'error', 'errors': {'steps': ['Please enter the number of steps.']}})
+        if activity.activity_type == 'exercise' and activity.minutes == 0:
+            return JsonResponse({'status': 'error', 'errors': {'minutes': ['Please enter the number of minutes.']}})
 
-            return JsonResponse({
-                'status': 'success',
-                'row_html': row_html,
-                'profile_row_html': profile_row_html
-            })
-        else:
-            return JsonResponse({'status': 'error', 'errors': form.errors})
+        activity.save()
+
+        # Update profile
+        profile, created = Profile.objects.get_or_create(user=request.user)
+        if activity.activity_type == 'steps':
+            profile.steps_logged += activity.steps
+        elif activity.activity_type == 'exercise':
+            profile.exercises_logged += 1
+        profile.save()
+
+        # Update competition progress
+        today = timezone.now().date()
+        active_competitions = Competition.objects.filter(
+            competitionparticipant__user=request.user,
+            competition_type=activity.activity_type,
+            start_date__lte=today,
+            end_date__gte=today
+        )
+
+        for competition in active_competitions:
+            participant = CompetitionParticipant.objects.get(
+                user=request.user, competition=competition
+            )
+            if activity.activity_type == 'steps':
+                participant.progress += activity.steps
+            elif activity.activity_type == 'exercise':
+                participant.progress += activity.minutes
+            participant.save()
+
+        # Render updated rows
+        row_html = render_to_string('partials/activity_list_item.html', {'activity': activity})
+        profile_row_html = render_to_string('partials/activity_table_row.html', {'log': activity})
+
+        return JsonResponse({
+            'status': 'success',
+            'row_html': row_html,
+            'profile_row_html': profile_row_html
+        })
+
+    # If invalid form
+    return JsonResponse({'status': 'error', 'errors': form.errors})
+
 
 #view to edit activities 
 @login_required
