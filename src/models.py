@@ -12,15 +12,15 @@ class Profile(models.Model):
         return f"{self.user.username}'s Profile"
 
 class ActivityLog(models.Model):
-    ACTIVITY_CHOICES = [ #distinguishes between steps and exercise minutes
-        ('steps', 'Steps'),
-        ('exercise', 'Exercise (minutes)'),
-    ]
+    # ACTIVITY_CHOICES = [ #distinguishes between steps and exercise minutes
+    #     ('steps', 'Steps'),
+    #     ('exercise', 'Exercise (minutes)'),
+    # ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    activity_type = models.CharField(max_length=10, choices=ACTIVITY_CHOICES)
+    activity_type = models.CharField(max_length=15, null=True)
     steps = models.PositiveIntegerField(null=True, blank=True) #this makes this optional so that it can be steps or minutes
-    minutes = models.PositiveIntegerField(null=True, blank=True) #same as above 
+    # minutes = models.PositiveIntegerField(null=True, blank=True) #same as above 
     date = models.DateField(auto_now_add=True)
 
     def __str__(self):
@@ -29,17 +29,17 @@ class ActivityLog(models.Model):
 
 #model for competitions 
 class Competition(models.Model):
-    COMPETITION_TYPE_CHOICES = [
-    ('steps', 'Steps'),
-    ('minutes', 'Exercise Minutes'),
-    ]
+    # COMPETITION_TYPE_CHOICES = [
+    # ('steps', 'Steps'),
+    # ('minutes', 'Exercise Minutes'),
+    # ]
 
     name = models.CharField(max_length=255)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_competitions")
     participants = models.ManyToManyField(User, related_name="joined_competitions", blank=True)
     start_date = models.DateField()
     end_date = models.DateField()
-    competition_type = models.CharField(max_length=10, choices=COMPETITION_TYPE_CHOICES)
+    # competition_type = models.CharField(max_length=15, null=True)
 
     def __str__(self):
         return self.name

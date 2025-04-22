@@ -7,27 +7,27 @@
     <div id="steps-section">
       {{ form.steps.label_tag }} {{ form.steps }}
     </div>
-    <div id="minutes-section">
+    <!-- <div id="minutes-section">
       {{ form.minutes.label_tag }} {{ form.minutes }}
     </div>
-    <button type="submit">Submit</button>
+    <button type="submit">Submit</button> -->
   </form>
 
   <script>
-    const activityType = document.querySelector('#id_activity_type');
+    // const activityType = document.querySelector('#id_activity_type');
     const stepsSection = document.getElementById('steps-section');
-    const minutesSection = document.getElementById('minutes-section');
+    // const minutesSection = document.getElementById('minutes-section');
 
     function toggleFields() {
       if (activityType.value === 'steps') {
         stepsSection.style.display = 'block';
-        minutesSection.style.display = 'none';
-      } else if (activityType.value === 'exercise') {
-        stepsSection.style.display = 'none';
-        minutesSection.style.display = 'block';
+        // minutesSection.style.display = 'none';
+      // } else if (activityType.value === 'exercise') {
+      //   stepsSection.style.display = 'none';
+      //   minutesSection.style.display = 'block';
       } else {
         stepsSection.style.display = 'none';
-        minutesSection.style.display = 'none';
+        // minutesSection.style.display = 'none';
       }
     }
 

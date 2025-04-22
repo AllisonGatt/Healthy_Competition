@@ -107,13 +107,13 @@ def profile_view(request):
                     output_field=IntegerField()
                 )
             ),
-            total_minutes=Sum(
-                Case(
-                    When(activity_type='exercise', then='minutes'),
-                    default=0,
-                    output_field=IntegerField()
-                )
-            )
+            # total_minutes=Sum(
+            #     Case(
+            #         When(activity_type='exercise', then='minutes'),
+            #         default=0,
+            #         output_field=IntegerField()
+            #     )
+            # )
         )
         .order_by('-date')
     )
@@ -137,8 +137,8 @@ def log_activity_ajax(request):
         # Extra validation
         if activity.activity_type == 'steps' and activity.steps == 0:
             return JsonResponse({'status': 'error', 'errors': {'steps': ['Please enter the number of steps.']}})
-        if activity.activity_type == 'exercise' and activity.minutes == 0:
-            return JsonResponse({'status': 'error', 'errors': {'minutes': ['Please enter the number of minutes.']}})
+        # if activity.activity_type == 'exercise' and activity.minutes == 0:
+        #     return JsonResponse({'status': 'error', 'errors': {'minutes': ['Please enter the number of minutes.']}})
 
         activity.save()
 
@@ -154,7 +154,7 @@ def log_activity_ajax(request):
         today = timezone.now().date()
         active_competitions = Competition.objects.filter(
             competitionparticipant__user=request.user,
-            competition_type=activity.activity_type,
+            # competition_type=activity.activity_type,
             start_date__lte=today,
             end_date__gte=today
         )
@@ -165,8 +165,8 @@ def log_activity_ajax(request):
             )
             if activity.activity_type == 'steps':
                 participant.progress += activity.steps
-            elif activity.activity_type == 'exercise':
-                participant.progress += activity.minutes
+            # elif activity.activity_type == 'exercise':
+            #     participant.progress += activity.minutes
             participant.save()
 
         # Render updated rows
@@ -212,33 +212,33 @@ def competition_list(request):
     all_competitions = Competition.objects.all()
 
     current_competitions_steps = all_competitions.filter(
-        competition_type='steps',
+        # competition_type='steps',
         end_date__gte=today
     )
 
-    current_competitions_minutes = all_competitions.filter(
-        competition_type='minutes',
-        end_date__gte=today
-    )
+    # current_competitions_minutes = all_competitions.filter(
+    #     competition_type='minutes',
+    #     end_date__gte=today
+    # )
 
     past_competitions_steps = all_competitions.filter(
-        competition_type='steps',
+        # competition_type='steps',
         end_date__lt=today
     )
 
-    past_competitions_minutes = all_competitions.filter(
-        competition_type='minutes',
-        end_date__lt=today
-    )
+    # past_competitions_minutes = all_competitions.filter(
+    #     competition_type='minutes',
+    #     end_date__lt=today
+    # )
 
     # Get IDs of competitions the current user joined
     joined_comp_ids = CompetitionParticipant.objects.filter(user=request.user).values_list('competition_id', flat=True)
 
     return render(request, 'competition_list.html', {
         'current_competitions_steps': current_competitions_steps,
-        'current_competitions_minutes': current_competitions_minutes,
+        # 'current_competitions_minutes': current_competitions_minutes,
         'past_competitions_steps': past_competitions_steps,
-        'past_competitions_minutes': past_competitions_minutes,
+        # 'past_competitions_minutes': past_competitions_minutes,
         'joined_comp_ids': joined_comp_ids
     })
 

@@ -10,7 +10,7 @@
             <tr>
                 <th>Date</th>
                 <th>Total Steps</th>
-                <th>Total Exercise Minutes</th>
+                <!-- <th>Total Exercise Minutes</th> -->
             </tr>
         </thead>
         <tbody>
@@ -18,7 +18,7 @@
                 <tr>
                     <td>{{ entry.date }}</td>
                     <td>{{ entry.total_steps }}</td>
-                    <td>{{ entry.total_minutes }}</td>
+                    <!-- <td>{{ entry.total_minutes }}</td> -->
                 </tr>
             {% empty %}
                 <tr>
@@ -34,7 +34,7 @@
                 <th>Date</th>
                 <th>Type</th>
                 <th>Steps</th>
-                <th>Minutes</th>
+                <!-- <th>Minutes</th> -->
                 <th>Actions</th>
             </tr>
         </thead>
@@ -44,7 +44,7 @@
                     <td>{{ log.date }}</td>
                     <td>{{ log.get_activity_type_display }}</td>
                     <td>{{ log.steps }}</td>
-                    <td>{{ log.minutes }}</td>
+                    <!-- <td>{{ log.minutes }}</td> -->
                     <td>
                         <a href="{% url 'edit_activity' log.pk %}">Edit</a> |
                         <a href="{% url 'delete_activity' log.pk %}">Delete</a>
