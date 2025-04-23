@@ -6,41 +6,9 @@
     {{ form.steps.label_tag }} {{ form.steps }}
     <button type="submit">Submit</button>
   </form>
+  <div class="form-group">
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" class="form-control" max="{{ today|date:'Y-m-d' }}">
+</div>
 {% endblock %}
 
-
-<!-- {% extends 'base.html' %}
-{% block content %}
-  <h2>Log Your Steps!</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.activity_type.label_tag }} {{ form.activity_type }}
-    <div id="steps-section">
-      {{ form.steps.label_tag }} {{ form.steps }}
-    </div>
-    <div id="minutes-section">
-      {{ form.minutes.label_tag }} {{ form.minutes }}
-    </div>
-    <button type="submit">Submit</button> -->
-  <!-- </form>
-
-  <script>
-    const stepsSection = document.getElementById('steps-section'); -->
-
-    <!-- function toggleFields() {
-      if (activityType.value === 'steps') {
-        stepsSection.style.display = 'block';
-        // minutesSection.style.display = 'none';
-      // } else if (activityType.value === 'exercise') {
-      //   stepsSection.style.display = 'none';
-      //   minutesSection.style.display = 'block';
-      } else {
-        stepsSection.style.display = 'none';
-        // minutesSection.style.display = 'none';
-      }
-    } -->
-
-    <!-- toggleFields(); // Run on load
-    activityType.addEventListener('change', toggleFields); // Run on change
-  </script>
-{% endblock %} --> 

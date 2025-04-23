@@ -20,13 +20,7 @@
       <tr {% if participant.user == user %}style="font-weight: bold;"{% endif %}>
         <td>{{ forloop.counter }}</td>
         <td>{{ participant.user.username }}</td>
-        <!-- <td>{{competition.get_competition_type_display}} -->
         <td>{{ participant.user.steps}}  
-          <!-- {% if competition.competition_type == "steps" %}
-            {{ participant.steps }}
-          {% else %}
-            {{ participant.exercise_minutes }}
-          {% endif %} -->
         </td>
       </tr>
     {% endfor %}

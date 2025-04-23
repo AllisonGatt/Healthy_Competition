@@ -5,16 +5,16 @@ from .models import Competition
 class ActivityLogForm(forms.ModelForm):
     class Meta:
         model = ActivityLog
-        fields = ['steps']
+        fields = ['steps', 'date']
         widgets = {
             'steps': forms.NumberInput(attrs={'placeholder': 'Enter step count'}),
-            # 'minutes': forms.NumberInput(attrs={'placeholder': 'Enter minutes exercised'}),
+            'date': forms.DateInput(attrs={'type': 'date'})  # HTML5 date picker
         }
 
     def __init__(self, *args, **kwargs):
         super(ActivityLogForm, self).__init__(*args, **kwargs)
         self.fields['steps'].required = False
-        # self.fields['minutes'].required = False
+        self.fields['date'].required = True
         
 #form for competiton
 class CompetitionForm(forms.ModelForm):

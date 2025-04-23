@@ -28,26 +28,6 @@
     {% endfor %}
 </ul>
 
-<!-- <h4>Exercise Minute Competitions</h4>
-<ul>
-    {% for comp in current_competitions_minutes %}
-        <li>
-            <strong>{{ comp.name }}</strong> ({{ comp.start_date }} - {{ comp.end_date }})
-            {% if user.is_authenticated %}
-                {% if comp.id not in joined_comp_ids %}
-                <form action="{% url 'join_competition' comp.id %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit">Join Competition</button>
-                </form>
-            {% else %}
-                <em>You’ve joined!</em>
-            {% endif %}
-            {% endif %}
-        </li>
-    {% empty %}
-        <li>No current exercise competitions.</li>
-    {% endfor %}
-</ul> -->
 
 <!-- PAST COMPETITIONS -->
 <h3>Past Competitions</h3>
@@ -61,17 +41,5 @@
         <li>No past step competitions.</li>
     {% endfor %}
 </ul>
-
-<!-- <h4>Exercise Minute Competitions</h4>
-<ul>
-    {% for comp in past_competitions_minutes %}
-        <li>
-            <strong>{{ comp.name }}</strong> ({{ comp.start_date }} - {{ comp.end_date }})
-            <a href="{% url 'competition_detail' comp.id %}">See Results</a>
-        </li>
-    {% empty %}
-        <li>No past exercise competitions.</li>
-    {% endfor %}
-</ul> -->
 
 {% endblock %}
