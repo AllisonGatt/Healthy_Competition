@@ -5,41 +5,26 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE) #one to one so that each user only has one profile
     bio = models.TextField(blank=True, null=True) #optional text 
     steps_logged = models.IntegerField(default=0) #default zero, steps logged, integer
-    exercises_logged = models.IntegerField(default=0) #default zero, exercise, integer
 
 #profile object is represented as a string
     def __str__(self):
         return f"{self.user.username}'s Profile"
 
 class ActivityLog(models.Model):
-    # ACTIVITY_CHOICES = [ #distinguishes between steps and exercise minutes
-    #     ('steps', 'Steps'),
-    #     ('exercise', 'Exercise (minutes)'),
-    # ]
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    activity_type = models.CharField(max_length=15, null=True)
-    steps = models.PositiveIntegerField(null=True, blank=True) #this makes this optional so that it can be steps or minutes
-    # minutes = models.PositiveIntegerField(null=True, blank=True) #same as above 
+    steps = models.PositiveIntegerField(default=0)
     date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.date}"
 
-
 #model for competitions 
 class Competition(models.Model):
-    # COMPETITION_TYPE_CHOICES = [
-    # ('steps', 'Steps'),
-    # ('minutes', 'Exercise Minutes'),
-    # ]
-
     name = models.CharField(max_length=255)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_competitions")
     participants = models.ManyToManyField(User, related_name="joined_competitions", blank=True)
     start_date = models.DateField()
     end_date = models.DateField()
-    # competition_type = models.CharField(max_length=15, null=True)
 
     def __str__(self):
         return self.name
@@ -48,9 +33,7 @@ class Competition(models.Model):
 class CompetitionParticipant(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
-    progress = models.PositiveIntegerField(default=0)  # Steps or minutes depending on competition type
-    # steps = models.PositiveIntegerField(default=0)
-    # exercise_minutes = models.PositiveIntegerField(default=0)
+    steps = models.PositiveIntegerField(default=0)  
     joined_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

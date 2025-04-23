@@ -5,7 +5,7 @@ from .models import Competition
 class ActivityLogForm(forms.ModelForm):
     class Meta:
         model = ActivityLog
-        fields = ['activity_type', 'steps']
+        fields = ['steps']
         widgets = {
             'steps': forms.NumberInput(attrs={'placeholder': 'Enter step count'}),
             # 'minutes': forms.NumberInput(attrs={'placeholder': 'Enter minutes exercised'}),

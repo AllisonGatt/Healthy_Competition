@@ -1,24 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
-  <h2>Log Your Activity</h2>
+  <h2>Log Your Steps</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.steps.label_tag }} {{ form.steps }}
+    <button type="submit">Submit</button>
+  </form>
+{% endblock %}
+
+
+<!-- {% extends 'base.html' %}
+{% block content %}
+  <h2>Log Your Steps!</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.activity_type.label_tag }} {{ form.activity_type }}
     <div id="steps-section">
       {{ form.steps.label_tag }} {{ form.steps }}
     </div>
-    <!-- <div id="minutes-section">
+    <div id="minutes-section">
       {{ form.minutes.label_tag }} {{ form.minutes }}
     </div>
     <button type="submit">Submit</button> -->
-  </form>
+  <!-- </form>
 
   <script>
-    // const activityType = document.querySelector('#id_activity_type');
-    const stepsSection = document.getElementById('steps-section');
-    // const minutesSection = document.getElementById('minutes-section');
+    const stepsSection = document.getElementById('steps-section'); -->
 
-    function toggleFields() {
+    <!-- function toggleFields() {
       if (activityType.value === 'steps') {
         stepsSection.style.display = 'block';
         // minutesSection.style.display = 'none';
@@ -29,9 +38,9 @@
         stepsSection.style.display = 'none';
         // minutesSection.style.display = 'none';
       }
-    }
+    } -->
 
-    toggleFields(); // Run on load
+    <!-- toggleFields(); // Run on load
     activityType.addEventListener('change', toggleFields); // Run on change
   </script>
-{% endblock %}
+{% endblock %} --> 

@@ -7,12 +7,12 @@
 <!-- CURRENT COMPETITIONS -->
 <h3>Current Competitions</h3>
 
-<h4>Step Competitions</h4>
 <ul>
     {% for comp in current_competitions_steps %}
         <li>
             <strong>{{ comp.name }}</strong> ({{ comp.start_date }} - {{ comp.end_date }})
             {% if user.is_authenticated %}
+            <a href="{% url 'competition_detail' comp.id %}">See detials</a>
                 {% if comp.id not in joined_comp_ids %}
                     <form action="{% url 'join_competition' comp.id %}" method="post" style="display:inline;">
                         {% csrf_token %}
@@ -51,13 +51,11 @@
 
 <!-- PAST COMPETITIONS -->
 <h3>Past Competitions</h3>
-
-<h4>Step Competitions</h4>
 <ul>
     {% for comp in past_competitions_steps %}
         <li>
             <strong>{{ comp.name }}</strong> ({{ comp.start_date }} - {{ comp.end_date }})
-            <a href="{% url 'competition_detail' comp.id %}">See Results</a>
+            <a href="{% url 'competition_results' comp.id %}">See Results</a>
         </li>
     {% empty %}
         <li>No past step competitions.</li>

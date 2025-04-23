@@ -4,13 +4,7 @@
 
   {% if user_participant %}
     <p><strong>Your Rank:</strong> {{ user_rank }}</p>
-    <p><strong>Your Total:</strong>
-      {% if competition.competition_type == "steps" %}
-        {{ user_participant.steps }} steps
-      {% else %}
-        {{ user_participant.exercise_minutes }} minutes
-      {% endif %}
-    </p>
+    <p><strong>Your Total:</strong>{{ user_participant.steps }} </p>
   {% else %}
     <p>You did not participate in this competition.</p>
   {% endif %}
@@ -20,20 +14,14 @@
     <tr>
       <th>Rank</th>
       <th>User</th>
-      <th>
-        {% if competition.competition_type == "steps" %}
-          Steps
-        {% else %}
-          Exercise Minutes
-        {% endif %}
-      </th>
+      <th> Steps </th>
     </tr>
     {% for participant in leaderboard %}
       <tr {% if participant.user == user %}style="font-weight: bold;"{% endif %}>
         <td>{{ forloop.counter }}</td>
         <td>{{ participant.user.username }}</td>
-        <td>{{competition.get_competition_type_display}}
-
+        <!-- <td>{{competition.get_competition_type_display}} -->
+        <td>{{ participant.user.steps}}  
           <!-- {% if competition.competition_type == "steps" %}
             {{ participant.steps }}
           {% else %}
@@ -43,4 +31,5 @@
       </tr>
     {% endfor %}
   </table>
+  <a href="{% url 'competition_list' %}">Back to Competitions</a>
 {% endblock %}

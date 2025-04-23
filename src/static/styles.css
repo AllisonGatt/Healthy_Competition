@@ -28,12 +28,12 @@ body {
   }
   
 /* Navigation styles */
-nav {
+#nav-bar {
     background-color: #444;
     border-bottom: 2px solid #ddd;
 }
 
-nav ul {
+#nav-bar ul {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -41,11 +41,11 @@ nav ul {
     justify-content: center;
 }
 
-nav ul li {
+#nav-bar li {
     margin: 0 15px;
 }
 
-nav ul li a {
+#nav-bar li a {
     color: white;
     text-decoration: none;
     font-size: 18px;
@@ -53,16 +53,16 @@ nav ul li a {
     display: inline-block;
 }
 
-nav ul li a:hover,
-nav ul li a:focus {
+#nav-bar li a:hover,
+#nav-bar li a:focus {
     background-color: #ff6600;
     border-radius: 5px;
 }
 
 /* For authenticated users' additional links */
-nav ul li a + a {
+/* nav ul li a + a {
     margin-left: 20px;
-}
+} */
 
 /* Form (Logout button) styles */
 form {
@@ -112,6 +112,12 @@ form button:hover {
     background-color: #e2f3ec;
   }
   
+  #home-page {
+    text-decoration: none;
+    background-color: #ff6600;
+    border-radius: 5px;
+  }
+
   /* Buttons for edit/delete */
   .action-buttons {
     display: flex;

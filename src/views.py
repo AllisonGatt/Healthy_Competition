@@ -99,22 +99,7 @@ def profile_view(request):
         ActivityLog.objects
         .filter(user=request.user)
         .values('date')  # Use date directly, since it's already a DateField
-        .annotate(
-            total_steps=Sum(
-                Case(
-                    When(activity_type='steps', then='steps'),
-                    default=0,
-                    output_field=IntegerField()
-                )
-            ),
-            # total_minutes=Sum(
-            #     Case(
-            #         When(activity_type='exercise', then='minutes'),
-            #         default=0,
-            #         output_field=IntegerField()
-            #     )
-            # )
-        )
+        .annotate(total_steps=Sum('steps'))
         .order_by('-date')
     )
 
@@ -133,40 +118,27 @@ def log_activity_ajax(request):
     if form.is_valid():
         activity = form.save(commit=False)
         activity.user = request.user
-
-        # Extra validation
-        if activity.activity_type == 'steps' and activity.steps == 0:
-            return JsonResponse({'status': 'error', 'errors': {'steps': ['Please enter the number of steps.']}})
-        # if activity.activity_type == 'exercise' and activity.minutes == 0:
-        #     return JsonResponse({'status': 'error', 'errors': {'minutes': ['Please enter the number of minutes.']}})
-
         activity.save()
 
         # Update profile
         profile, created = Profile.objects.get_or_create(user=request.user)
-        if activity.activity_type == 'steps':
-            profile.steps_logged += activity.steps
-        elif activity.activity_type == 'exercise':
-            profile.exercises_logged += 1
+        profile.steps_logged += activity.steps
         profile.save()
 
-        # Update competition progress
+        # Update competition progress only for steps
+
         today = timezone.now().date()
         active_competitions = Competition.objects.filter(
             competitionparticipant__user=request.user,
-            # competition_type=activity.activity_type,
             start_date__lte=today,
             end_date__gte=today
         )
 
         for competition in active_competitions:
-            participant = CompetitionParticipant.objects.get(
+            participant, _ = CompetitionParticipant.objects.get_or_create(
                 user=request.user, competition=competition
             )
-            if activity.activity_type == 'steps':
-                participant.progress += activity.steps
-            # elif activity.activity_type == 'exercise':
-            #     participant.progress += activity.minutes
+            participant.steps += activity.steps
             participant.save()
 
         # Render updated rows
@@ -273,7 +245,7 @@ def join_competition(request, competition_id):
             user=request.user,
             competition=competition,
             #steps=0  
-            progress=0
+            steps=0
         )
         messages.success(request, f"You joined the competition: {competition.name}")
     else:
@@ -300,7 +272,7 @@ def competition_results(request, competition_id):
     # elif competition.competition_type == 'minutes':
     #     participants = participants.order_by('-exercise_minutes')
 
-    participants = CompetitionParticipant.objects.filter(competition=competition).order_by('-progress')
+    participants = CompetitionParticipant.objects.filter(competition=competition).order_by('-steps')
 
     
     # Leaderboard and user rank
