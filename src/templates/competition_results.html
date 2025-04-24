@@ -20,7 +20,7 @@
       <tr {% if participant.user == user %}style="font-weight: bold;"{% endif %}>
         <td>{{ forloop.counter }}</td>
         <td>{{ participant.user.username }}</td>
-        <td>{{ participant.user.steps}}  
+        <td>{{ participant.steps}}  
         </td>
       </tr>
     {% endfor %}

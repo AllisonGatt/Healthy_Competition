@@ -256,26 +256,66 @@ def join_competition(request, competition_id):
 def competition_detail(request, competition_id):
     competition = get_object_or_404(Competition, pk=competition_id)
     participants = CompetitionParticipant.objects.filter(competition=competition)
+
+    for participant in participants:
+        steps_during_comp = (
+            ActivityLog.objects
+            .filter(
+                user=participant.user,
+                date__gte=competition.start_date,
+                date__lte=competition.end_date
+            )
+            .aggregate(total_steps=Sum('steps'))['total_steps'] or 0
+        )
+        participant.total_steps_during_comp = steps_during_comp
+
     return render(request, 'competition_detail.html', {
         'competition': competition,
         'participants': participants
     })
 
+# def competition_results(request, competition_id):
+#     competition = get_object_or_404(Competition, id=competition_id)
+#     #participants = CompetitionParticipant.objects.filter(competition=competition).order_by('-steps')
+    
+#     # Determine what to sort by
+#     # if competition.competition_type == 'steps':
+#     #     participants = participants.order_by('-steps')
+#     # elif competition.competition_type == 'minutes':
+#     #     participants = participants.order_by('-exercise_minutes')
+
+#     participants = CompetitionParticipant.objects.filter(competition=competition).order_by('-steps')
+
+    
+#     # Leaderboard and user rank
+#     leaderboard = list(participants)
+#     user_participant = participants.filter(user=request.user).first()
+#     user_rank = None
+
+#     if user_participant:
+#         for index, participant in enumerate(leaderboard):
+#             if participant.user == request.user:
+#                 user_rank = index + 1
+#                 break
+
+#     return render(request, 'competition_results.html', {
+#         'competition': competition,
+#         'leaderboard': leaderboard,
+#         'user_participant': user_participant,
+#         'user_rank': user_rank
+#     })
+# from django.shortcuts import render, get_object_or_404
+# from .models import Competition, CompetitionParticipant
 
 def competition_results(request, competition_id):
     competition = get_object_or_404(Competition, id=competition_id)
-    #participants = CompetitionParticipant.objects.filter(competition=competition).order_by('-steps')
-    
-    # Determine what to sort by
-    # if competition.competition_type == 'steps':
-    #     participants = participants.order_by('-steps')
-    # elif competition.competition_type == 'minutes':
-    #     participants = participants.order_by('-exercise_minutes')
 
-    participants = CompetitionParticipant.objects.filter(competition=competition).order_by('-steps')
+    # Get all participants ordered by steps in descending order
+    participants = CompetitionParticipant.objects.filter(
+        competition=competition
+    ).order_by('-steps')
 
-    
-    # Leaderboard and user rank
+    # Create leaderboard list and find user's rank
     leaderboard = list(participants)
     user_participant = participants.filter(user=request.user).first()
     user_rank = None

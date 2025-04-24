@@ -19,20 +19,17 @@
         <button type="submit" class="btn btn-primary mt-2">Log Activity</button>
     </form>
 
+    <script>
+        const dateInput = document.querySelector('input[type="date"]');
+        if (dateInput) {
+          const today = new Date().toISOString().split('T')[0];
+          dateInput.max = today;
+        }
+      </script>
+
     <div id="success-message" class="alert alert-success mt-3" style="display: none;">
         Activity logged successfully!
     </div>
-
-    <!-- <h2>Log Your Steps</h2>
-    <form method="post">
-      {% csrf_token %}
-      {{ form.steps.label_tag }} {{ form.steps }}
-      <button type="submit">Submit</button>
-    </form>
-    <div class="form-group">
-      <label for="date">Date:</label>
-      <input type="date" id="date" name="date" class="form-control" max="{{ today|date:'Y-m-d' }}">
-  </div> -->
 
     <!-- Activity Log List -->
     <h4 class="mt-4">Recent Activity</h4>

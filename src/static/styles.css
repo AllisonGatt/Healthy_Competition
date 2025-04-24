@@ -163,3 +163,8 @@ form button:hover {
     border-top: 1px solid #ddd;
   }
   
+  #current_competition_list li {
+    text-decoration: none;
+    border: 5px #e2f3ec
+
+  }

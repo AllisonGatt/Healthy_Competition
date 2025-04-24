@@ -1,6 +1,7 @@
 from django import forms
 from .models import ActivityLog
 from .models import Competition
+from django.utils import timezone
 
 class ActivityLogForm(forms.ModelForm):
     class Meta:
@@ -10,6 +11,12 @@ class ActivityLogForm(forms.ModelForm):
             'steps': forms.NumberInput(attrs={'placeholder': 'Enter step count'}),
             'date': forms.DateInput(attrs={'type': 'date'})  # HTML5 date picker
         }
+
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date > timezone.now().date():
+            raise forms.ValidationError("You cannot log steps for a future date.")
+        return date
 
     def __init__(self, *args, **kwargs):
         super(ActivityLogForm, self).__init__(*args, **kwargs)
