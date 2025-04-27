@@ -1,33 +1,39 @@
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("Script loaded");
 
+//ensures the DOM is fully loaded before running script
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Script loaded"); //logging the loaded script
+
+    //gets references to elements on the page based on the IDs
     const form = document.getElementById("activity-form");
     const successMessage = document.getElementById("success-message");
     const activityList = document.getElementById("activity-list"); // Dashboard <ul>
     const profileTable = document.getElementById("profile-activity-list"); // Profile table <tbody>
 
-    if (!form) return; // Only run if the form exists
+    if (!form) return; // Only runs if the form exists
 
+    //event listener to handle submit event
     form.addEventListener("submit", function (e) {
-        e.preventDefault();
+        e.preventDefault(); //this prevents the default form submission so as to not reload the page
 
-        console.log("Form submitted");
+        console.log("Form submitted"); //logs the form has been submitted
 
+        //creates formData object
         const formData = new FormData(form);
 
         fetch("/log-activity-ajax/", {
             method: "POST",
-            headers: {
+            headers: { //added CSRF token header for security 
                 "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
             },
-            body: formData,
+            body: formData, //sends the form data in the body of the request
         })
-        .then((response) => response.json())
+        .then((response) => response.json())//this waits for the server's respons and parses it as JSON
         .then((data) => {
-            console.log("AJAX response:", data);
+            console.log("AJAX response:", data);//logs for debugging purposes
 
+            //if sucess, proceed with updating the UI
             if (data.status === "success") {
-                successMessage.style.display = "block";
+                successMessage.style.display = "block"; //shows success message
 
                 // Update dashboard activity list
                 if (activityList) {
@@ -38,9 +44,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (profileTable) {
                     profileTable.insertAdjacentHTML("afterbegin", data.profile_row_html);
                 }
-
+                //resets the form
                 form.reset();
-
+                //hides success message after 2 seconds
                 setTimeout(() => {
                     successMessage.style.display = "none";
                 }, 2000);
