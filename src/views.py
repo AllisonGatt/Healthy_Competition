@@ -14,6 +14,7 @@ from .models import Competition, CompetitionParticipant
 
 from .forms import ActivityLogForm
 from .forms import CompetitionForm
+from .forms import EditUsernameForm
 
 from datetime import datetime
 
@@ -244,6 +245,9 @@ def competition_detail(request, competition_id):
         'participants': participants
     })
 
+
+
+
 #shows results of past competitions
 @login_required
 def competition_results(request, competition_id):
@@ -271,3 +275,16 @@ def competition_results(request, competition_id):
         'user_participant': user_participant,
         'user_rank': user_rank
     })
+#view to edit profile username
+@login_required
+def edit_username(request):
+    if request.method == "POST":
+        form = EditUsernameForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')  
+    else:
+        form = EditUsernameForm(instance=request.user)
+    
+    return render(request, 'edit_username.html', {'form': form})
+

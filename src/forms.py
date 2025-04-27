@@ -2,6 +2,7 @@ from django import forms
 from .models import ActivityLog
 from .models import Competition
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class ActivityLogForm(forms.ModelForm):
     class Meta:
@@ -32,3 +33,9 @@ class CompetitionForm(forms.ModelForm):
             "start_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
             "end_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
         }
+
+#edit username
+class EditUsernameForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username']

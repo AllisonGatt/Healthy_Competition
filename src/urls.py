@@ -18,4 +18,5 @@ urlpatterns = [
     path('competitions/<int:competition_id>/join/', views.join_competition, name='join_competition'),
     path('competition/<int:competition_id>/', views.competition_detail, name='competition_detail'),
     path('competition/<int:competition_id>/results/', views.competition_results, name='competition_results'),
+    path('edit-username/', views.edit_username, name='edit_username'),
 ]

@@ -4,7 +4,6 @@ from django.utils import timezone
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE) #one to one so that each user only has one profile
-    bio = models.TextField(blank=True, null=True) #optional text 
     steps_logged = models.IntegerField(default=0) #default zero, steps logged, integer
 
 #profile object is represented as a string
