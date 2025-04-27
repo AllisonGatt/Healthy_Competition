@@ -178,39 +178,23 @@ def delete_activity(request, pk):
     return render(request, 'delete_activity.html', {'activity': activity})
 
 #creating a competition list
-@login_required
 def competition_list(request):
     today = timezone.now().date()
     all_competitions = Competition.objects.all()
 
-    current_competitions_steps = all_competitions.filter(
-        # competition_type='steps',
-        end_date__gte=today
-    )
-
-    # current_competitions_minutes = all_competitions.filter(
-    #     competition_type='minutes',
-    #     end_date__gte=today
-    # )
-
-    past_competitions_steps = all_competitions.filter(
-        # competition_type='steps',
-        end_date__lt=today
-    )
-
-    # past_competitions_minutes = all_competitions.filter(
-    #     competition_type='minutes',
-    #     end_date__lt=today
-    # )
+    #filtering past and current competitions
+    current_competitions_steps = all_competitions.filter(end_date__gte=today)
+    past_competitions_steps = all_competitions.filter(end_date__lt=today)
 
     # Get IDs of competitions the current user joined
-    joined_comp_ids = CompetitionParticipant.objects.filter(user=request.user).values_list('competition_id', flat=True)
+    if request.user.is_authenticated:
+        joined_comp_ids = CompetitionParticipant.objects.filter(user=request.user).values_list('competition_id', flat=True)
+    else:
+        joined_comp_ids = []
 
     return render(request, 'competition_list.html', {
         'current_competitions_steps': current_competitions_steps,
-        # 'current_competitions_minutes': current_competitions_minutes,
         'past_competitions_steps': past_competitions_steps,
-        # 'past_competitions_minutes': past_competitions_minutes,
         'joined_comp_ids': joined_comp_ids
     })
 
@@ -274,39 +258,8 @@ def competition_detail(request, competition_id):
         'participants': participants
     })
 
-# def competition_results(request, competition_id):
-#     competition = get_object_or_404(Competition, id=competition_id)
-#     #participants = CompetitionParticipant.objects.filter(competition=competition).order_by('-steps')
-    
-#     # Determine what to sort by
-#     # if competition.competition_type == 'steps':
-#     #     participants = participants.order_by('-steps')
-#     # elif competition.competition_type == 'minutes':
-#     #     participants = participants.order_by('-exercise_minutes')
-
-#     participants = CompetitionParticipant.objects.filter(competition=competition).order_by('-steps')
-
-    
-#     # Leaderboard and user rank
-#     leaderboard = list(participants)
-#     user_participant = participants.filter(user=request.user).first()
-#     user_rank = None
-
-#     if user_participant:
-#         for index, participant in enumerate(leaderboard):
-#             if participant.user == request.user:
-#                 user_rank = index + 1
-#                 break
-
-#     return render(request, 'competition_results.html', {
-#         'competition': competition,
-#         'leaderboard': leaderboard,
-#         'user_participant': user_participant,
-#         'user_rank': user_rank
-#     })
-# from django.shortcuts import render, get_object_or_404
-# from .models import Competition, CompetitionParticipant
-
+#shows results of past competitions
+@login_required
 def competition_results(request, competition_id):
     competition = get_object_or_404(Competition, id=competition_id)
 

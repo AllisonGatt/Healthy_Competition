@@ -20,7 +20,7 @@
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="3">No activity logged yet.</td>
+                    <td colspan="2">No activity logged yet.</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -30,8 +30,8 @@
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Type</th>
                 <th>Steps</th>
+                <th>Edit/Delete</th>
             </tr>
         </thead>
         <tbody id="profile-activity-list">
@@ -45,7 +45,7 @@
                     </td>
                 </tr>
             {% empty %}
-                <tr><td colspan="5">No activity logged yet.</td></tr>
+                <tr><td colspan="3">No activity logged yet.</td></tr>
             {% endfor %}
         </tbody>
     </table>

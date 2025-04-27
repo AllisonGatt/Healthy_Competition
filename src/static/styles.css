@@ -1,170 +1,261 @@
 /* General Styles */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f7fa;
-    color: #333;
-    line-height: 1.6;
-  }
-  
-  .container {
-    max-width: 900px;
-    margin: auto;
-    padding: 2rem;
-  }
-  
-  /* Header */
-  header {
-    background: linear-gradient(90deg, #56cc9d, #6eafd9);
-    color: white;
-    padding: 1rem 2rem;
-    text-align: center;
-    border-bottom: 4px solid #4fa988;
-  }
-  
-  header h1 {
-    margin: 0;
-  }
-  
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f7fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 2rem;
+}
+
+/* Header */
+header {
+  background: linear-gradient(90deg, #56cc9d, #6eafd9);
+  color: white;
+  padding: 1rem 2rem;
+  text-align: center;
+  border-bottom: 4px solid #4fa988;
+}
+
+header h1 {
+  margin: 0;
+}
+
+/* General Link Styles */
+a {
+  text-decoration: none;
+  color: #56cc9d;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+a:hover,
+a:focus {
+  color: #ff6600;
+  transform: translateY(-2px);
+}
+
+a:visited {
+  color: #777;
+}
+
+a:active {
+  color: #e55d00;
+}
+
 /* Navigation styles */
 #nav-bar {
-    background-color: #444;
-    border-bottom: 2px solid #ddd;
+  background-color: #444;
+  border-bottom: 2px solid #ddd;
 }
 
 #nav-bar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
 }
 
 #nav-bar li {
-    margin: 0 15px;
+  margin: 0 15px;
 }
 
 #nav-bar li a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-    padding: 10px 15px;
-    display: inline-block;
+  color: white;
+  font-size: 18px;
+  padding: 10px 15px;
+  display: inline-block;
 }
 
 #nav-bar li a:hover,
 #nav-bar li a:focus {
-    background-color: #ff6600;
-    border-radius: 5px;
+  background-color: #ff6600;
+  border-radius: 5px;
 }
-
-/* For authenticated users' additional links */
-/* nav ul li a + a {
-    margin-left: 20px;
-} */
 
 /* Form (Logout button) styles */
 form {
-    display: inline;
+  display: inline;
 }
 
 form button {
-    background-color: #ff6600;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
+  background-color: #ff6600;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
 form button:hover {
-    background-color: #e55d00;
+  background-color: #e55d00;
 }
 
-/* Responsive navigation */
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+th, td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+th {
+  background-color: #e2f3ec;
+}
+
+/* Buttons as Links */
+a.button-link {
+  display: inline-block;
+  padding: 0.75rem 1.25rem;
+  background-color: #56cc9d;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+a.button-link:hover,
+a.button-link:focus {
+  background-color: #4fa988;
+  transform: translateY(-2px);
+}
+
+a.button-link:active {
+  background-color: #e55d00;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #f0f0f0;
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 3rem;
+  border-top: 1px solid #ddd;
+}
+
+/* Competition List Item Styling */
+#competition-list {
+  margin-top: 2rem;
+}
+
+#competition-list h2 {
+  color: #4fa988;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+#competition-list .competition-item {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+#competition-list .competition-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#competition-list .competition-item h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+#competition-list .competition-item .dates {
+  font-size: 1rem;
+  color: #777;
+  margin-top: 0.5rem;
+}
+
+#competition-list .competition-item .join-button,
+#competition-list .competition-item .view-results-button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  text-align: center;
+  margin-top: 1rem;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+#competition-list .competition-item .join-button {
+  background-color: #56cc9d;
+  color: white;
+}
+
+#competition-list .competition-item .view-results-button {
+  background-color: #ff6600;
+  color: white;
+}
+
+#competition-list .competition-item .join-button:hover {
+  background-color: #4fa988;
+}
+
+#competition-list .competition-item .view-results-button:hover {
+  background-color: #e55d00;
+}
+
+/* Action Buttons (Edit/Delete) */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+button.edit,
+button.delete {
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+button.edit {
+  background-color: #6eafd9;
+  color: white;
+}
+
+button.delete {
+  background-color: #e57373;
+  color: white;
+}
+
+button.edit:hover {
+  background-color: #4b94c1;
+}
+
+button.delete:hover {
+  background-color: #cc4c4c;
+}
+
+/* Responsive Navigation */
 @media (max-width: 768px) {
-    nav ul {
-        flex-direction: column;
-        align-items: center;
-    }
-    nav ul li {
-        margin: 10px 0;
-    }
+  #nav-bar ul {
+      flex-direction: column;
+      align-items: center;
+  }
+  #nav-bar ul li {
+      margin: 10px 0;
+  }
 }
-  /* Table Styles */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-    margin-bottom: 2rem;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  }
-  
-  th, td {
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    text-align: center;
-  }
-  
-  th {
-    background-color: #e2f3ec;
-  }
-  
-  #home-page {
-    text-decoration: none;
-    background-color: #ff6600;
-    border-radius: 5px;
-  }
-
-  /* Buttons for edit/delete */
-  .action-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-  
-  button.edit,
-  button.delete {
-    padding: 0.4rem 0.75rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-  
-  button.edit {
-    background-color: #6eafd9;
-    color: white;
-  }
-  
-  button.delete {
-    background-color: #e57373;
-    color: white;
-  }
-  
-  button.edit:hover {
-    background-color: #4b94c1;
-  }
-  
-  button.delete:hover {
-    background-color: #cc4c4c;
-  }
-  
-  /* Footer */
-  footer {
-    text-align: center;
-    padding: 1rem;
-    background-color: #f0f0f0;
-    font-size: 0.9rem;
-    color: #555;
-    margin-top: 3rem;
-    border-top: 1px solid #ddd;
-  }
-  
-  #current_competition_list li {
-    text-decoration: none;
-    border: 5px #e2f3ec
-
-  }
