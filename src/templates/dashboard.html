@@ -14,7 +14,7 @@
         </div>    
         <div class="form-group">
             <label for="date">Date:</label>
-            <input type="date" id="date" name="date" class="form-control" max="{{ today|date:'Y-m-d' }}">
+            <input type="date" id="date" name="date" class="form-control" max="{{ today|date:'Y-m-d' }}"> <!--Max set to today so that user cannot log future steps-->
         </div>
         <button type="submit" class="btn btn-primary mt-2">Log Activity</button>
     </form>

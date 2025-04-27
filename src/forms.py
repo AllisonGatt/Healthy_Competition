@@ -14,7 +14,7 @@ class ActivityLogForm(forms.ModelForm):
 
     def clean_date(self):
         date = self.cleaned_data['date']
-        if date > timezone.now().date():
+        if date > timezone.now().date(): #error handling so that a future date cannot be selected for logging steps
             raise forms.ValidationError("You cannot log steps for a future date.")
         return date
 

@@ -1,106 +1,56 @@
-from django.http import HttpResponse
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages
-from django.db.models import Sum, Case, When, IntegerField
-from django.utils import timezone
-from django.db.models import Sum
 from django.contrib.auth import login
+from django.db.models import Sum
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
-from django.http import JsonResponse
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-
 from .models import Profile, ActivityLog
-from .models import ActivityLog, Profile
 from .models import Competition, CompetitionParticipant
 
 from .forms import ActivityLogForm
 from .forms import CompetitionForm
 
+from datetime import datetime
+
+#homepage
 def index(request):
     return render(request, 'index.html')
 
+#signup page
 def signup(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = UserCreationForm(request.POST)#form for signing in
         if form.is_valid(): #ensures the input data is valid
             user = form.save()
             login(request, user)  # Automatically log in the new user
-            return redirect("index")  # Redirect to the homepage or dashboard
+            return redirect("index")  # This redirects to the homepage or dashboard
     else:
         form = UserCreationForm()
     
     return render(request, "signup.html", {"form": form})
 
+#dashboard where the user can see stats and log stats 
 @login_required
 def dashboard(request):
     activities = ActivityLog.objects.filter(user=request.user).order_by('-date')
     return render(request, 'dashboard.html', {'activities': activities})
 
-# @login_required
-# def log_activity(request):
-#     if request.method == 'POST':
-#         form = ActivityLogForm(request.POST)
-#         if form.is_valid():
-#             activity = form.save(commit=False)
-#             activity.user = request.user
-
-#             if activity.activity_type == 'steps' and activity.steps == 0:
-#                 form.add_error('steps', 'Please enter the number of steps.')
-#             elif activity.activity_type == 'exercise' and activity.minutes == 0:
-#                 form.add_error('minutes', 'Please enter the number of minutes.')
-#             else:
-#                 activity.save()
-
-#                 # Update profile
-#                 profile, created = Profile.objects.get_or_create(user=request.user)
-#                 if activity.activity_type == 'steps':
-#                     profile.steps_logged += activity.steps
-#                 elif activity.activity_type == 'exercise':
-#                     profile.exercises_logged += 1
-#                 profile.save()
-
-#                 today = timezone.now().date()
-#                 active_competitions = Competition.objects.filter(
-#                     competitionparticipant__user=request.user,
-#                     competition_type=activity.activity_type,
-#                     start_date__lte=today,
-#                     end_date__gte=today
-#                 )
-
-#                 for competition in active_competitions:
-#                     participant = CompetitionParticipant.objects.get(
-#                         user=request.user, competition=competition
-#                     )
-#                     if activity.activity_type == 'steps':
-#                         participant.progress += activity.steps
-#                     elif activity.activity_type == 'exercise':
-#                         participant.progress += activity.minutes
-#                     participant.save()
-
-
-#                 return redirect('dashboard')
-#     else:
-#         form = ActivityLogForm()
-
-#     return render(request, 'log_activity.html', {'form': form})
-
-
 #profile view, shows the exercise/steps logged and the date logged
-#uses sum to give total steps per date with a default of 0
-#orders by date
 @login_required
 def profile_view(request):
     profile = Profile.objects.get(user=request.user)
 
     daily_activity = (
         ActivityLog.objects
-        .filter(user=request.user)
+        .filter(user=request.user) #filters based on the user
         .values('date')  # Use date directly, since it's already a DateField
-        .annotate(total_steps=Sum('steps'))
-        .order_by('-date')
+        .annotate(total_steps=Sum('steps')) #umms the steps for the specific date
+        .order_by('-date')#orders the entries by date
     )
 
     logs = ActivityLog.objects.filter(user=request.user).order_by('-date')
@@ -111,6 +61,8 @@ def profile_view(request):
         'logs': logs,
     })
 
+#log activity IMPORTANT!! - this fulfills part 7: 'Implementation of JavaScript/AJAX to fetch data and rerender the page based on the user requests'
+#AJAX - see scripts.js for JavaScript functionaility for this
 @login_required
 @require_http_methods(["POST"])
 def log_activity_ajax(request):
@@ -120,12 +72,12 @@ def log_activity_ajax(request):
         activity.user = request.user
         activity.save()
 
-        # Update profile
+        # This updates the profile
         profile, created = Profile.objects.get_or_create(user=request.user)
         profile.steps_logged += activity.steps
         profile.save()
 
-        # Update competition progress only for steps
+        # This updates competition progress for steps
 
         today = timezone.now().date()
         active_competitions = Competition.objects.filter(
@@ -151,7 +103,7 @@ def log_activity_ajax(request):
             'profile_row_html': profile_row_html
         })
 
-    # If invalid form
+    # If the form is invalid 
     return JsonResponse({'status': 'error', 'errors': form.errors})
 
 
@@ -198,20 +150,54 @@ def competition_list(request):
         'joined_comp_ids': joined_comp_ids
     })
 
-
 #creating a competition
 @login_required
 def create_competition(request):
     if request.method == "POST":
         form = CompetitionForm(request.POST)
+
         if form.is_valid():
-            competition = form.save(commit=False)
-            competition.creator = request.user
-            competition.save()
-            competition.participants.add(request.user)
-            return redirect("competition_list")
+            # Validate the start and end dates
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
+
+            # Ensure both start_date and end_date are datetime objects (not just date objects)
+            # Convert to datetime by setting the time to midnight (if they are not already)
+            if isinstance(start_date, datetime):
+                start_date = start_date.date()  # Use the date part of datetime if provided
+            if isinstance(end_date, datetime):
+                end_date = end_date.date()  # Same for end_date
+
+            # Check if start date is in the past
+            if start_date < timezone.now().date():  # Use date() to compare dates only
+                form.add_error('start_date', 'Start date cannot be in the past.')
+                return render(request, "create_competition.html", {"form": form})
+
+            # Check if end date is before start date
+            if end_date <= start_date:
+                form.add_error('end_date', 'End date must be later than the start date.')
+                return render(request, "create_competition.html", {"form": form})
+
+            try:
+                competition = form.save(commit=False)
+                competition.creator = request.user
+                competition.save()
+                competition.participants.add(request.user)
+
+                messages.success(request, "Your competition was successfully created!")
+                return redirect("competition_list")
+            except Exception as e:
+                #CHECK - log the exception and show  error message
+                print(f"Error while creating competition: {e}")
+                messages.error(request, "There was an error creating the competition. Please try again later.")
+                return render(request, "create_competition.html", {"form": form})
+        else:
+            #CHECK - invalid form
+            messages.error(request, "Sorry! There were some errors in the form. Please check and try again!")
+            return render(request, "create_competition.html", {"form": form})
     else:
         form = CompetitionForm()
+
     return render(request, "create_competition.html", {"form": form})
 
 #joining a competition
